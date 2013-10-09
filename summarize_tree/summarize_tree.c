@@ -16,14 +16,31 @@ bool is_dir(const char* path) {
    * return value from stat in case there is a problem, e.g., maybe the
    * the file doesn't actually exist.
    */
+  bool b = false;
+  struct stat s;
+  if( stat(path, &s) == 0){
+    printf("in stat stuff\n");
+    if(S_ISDIR(s.st_mode) ){
+      b = true;
+    }
+  }
+  return b;
 }
+
 
 /* 
  * I needed this because the multiple recursion means there's no way to
  * order them so that the definitions all precede the cause.
  */
-void process_path(const char*);
+void process_path(const char* path);
 
+void process_file(const char* path) {
+  /*
+   * Update the number of regular files.
+   */
+  num_regular++;
+  printf("This is number of regular %d\n", num_regular++);
+}
 void process_directory(const char* path) {
   /*
    * Update the number of directories seen, use opendir() to open the
@@ -36,16 +53,29 @@ void process_directory(const char* path) {
    * with a matching call to chdir() to move back out of it when you're
    * done.
    */
-}
+  num_dirs++;
+   printf("This is number of directories %d\n", num_dirs++);
+  DIR *dir = opendir(path);
+  struct dirent *entry;
 
-void process_file(const char* path) {
-  /*
-   * Update the number of regular files.
-   */
-}
+  chdir(path);
+ 
+    while((entry = readdir(dir)) != NULL){
+      if(strcmp(entry->d_name, ".") != 0 || strcmp(entry->d_name, "..") != 0){
+	process_path(entry->d_name);
+      }
+      
+    }
+ closedir(dir);
+ chdir("..");
+  }
+
+
 
 void process_path(const char* path) {
+  printf("In process path\n");
   if (is_dir(path)) {
+    printf("Going to process directory\n");
     process_directory(path);
   } else {
     process_file(path);

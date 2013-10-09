@@ -1,0 +1,13 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+int main(int argc, char *argv[]) {
+  FILE *inputFile;
+  FILE *outputFile;
+
+  /* Code that processes the command line arguments and sets up inputFile and outputFile */
+
+  disemvowel(inputFile, outputFile);
+
+  return 0;
+}
